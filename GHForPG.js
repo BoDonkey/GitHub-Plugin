@@ -84,11 +84,23 @@ $(function () {
         pinegrow.addPluginControlToTopbar(framework, $menu, true, function(){
             addSettingsModal();
             addInitialListeners();
+            // Check if we are opening another project in a new window 
+            if (pinegrow.getCurrentProject()) {
+              addToGHMenu();
+            }
         });
 
-        //Adds project specific GitHub menu items - note need to solve problem with opening
+        //Adds project specific GitHub menu items 
+        //Replaced anonymous callback function with 'addToGHMenu' to solve problem with opening
         //project in a new window not triggering menu addition 
-        pinegrow.addEventHandler('on_project_loaded', function(pagenull, project) {
+        pinegrow.addEventHandler('on_project_loaded', addToGHMenu);
+
+        //Removes extra menu items on project close
+        pinegrow.addEventHandler('on_project_closed', removeFromGHMenu);
+
+        function addToGHMenu (pagenull, project) {
+          // first check existence of additional menu to avoid double entries to the GH Menu
+          if (!document.getElementById('stage-changes')) {
             let targetMenu = document.getElementById('gh-dropdown');
             let newItems = document.createDocumentFragment();
             let listOne = document.createElement('li');
@@ -103,12 +115,12 @@ $(function () {
             let menuDivider = targetMenu.children.namedItem('ruler-one');
             targetMenu.insertBefore(newItems, menuDivider);
             addAdditionalListeners();
-        });
+          }
+        }
 
-        //Removes extra menu items on project close
-        pinegrow.addEventHandler('on_project_closed', function(pagenull, project) {
-            document.getElementById('stage-changes').remove();
-            document.getElementById('commit-changes').remove();
-        });
+        function removeFromGHMenu (pagenull, project) {
+          document.getElementById('stage-changes').remove();
+          document.getElementById('commit-changes').remove();
+        }
     });
 });
