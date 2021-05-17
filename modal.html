@@ -1,4 +1,4 @@
-<style>.error { color: red; visibility: hidden; } .logged-in { color: green; visibility: hidden; }</style>
+<style>.gh-error { color: red; visibility: hidden; } .gh-logged-in { color: green; visibility: hidden; }</style>
 <div class="modal pg-show-modal fade" id="settingsModal" tabindex="-1" role="dialog" aria-labelledby="settingsModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -13,26 +13,26 @@
                     <div class="form-group">
                         <label for="user-name" class="form-control-label">User Name:</label>
                         <input type="text" class="form-control" id="gh-user-name" required>
-                        <span class="error" id="gh-username-error">There user name is not associated with this token.</span>
+                        <span class="gh-error" id="gh-username-error">There user name is not associated with this token.</span>
                     </div>
                     <div class="form-group">
                         <label for="gh-token" class="form-control-label">Personal Account Token:</label>
                         <input type="password" class="form-control" id="gh-token" required>
-                        <span class="error" id="gh-token-error">This token is not valid.</span>
+                        <span class="gh-error" id="gh-token-error">This token is not valid.</span>
                     </div>
                     <div class="form-check" id="gh-token-reveal">
                         <input class="form-check-input" type="checkbox" id="gh-show-token" value="showToken">
                         <label class="form-check-label" for="gh-show-token">Show token?</label>
                     </div>
                     <div>
-                        <span class="logged-in" id="correct-credentials">These credentials are valid</span>
+                        <span class="gh-logged-in" id="correct-credentials">These credentials are valid</span>
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
                 <button type="button" id="gh-clear-settings" class="btn btn-secondary">Clear settings</button>
                 <button type="button" id="gh-save-settings" class="btn btn-primary">Save Settings</button>
-                <button type="button" id="gh-cancel-settings" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" id="gh-cancel-settings" class="btn btn-secondary" data-dismiss="modal">Close </button>
             </div>
         </div>
     </div>

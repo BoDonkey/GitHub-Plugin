@@ -116,7 +116,7 @@ $(function () {
                 } else {
                     tokenErrorMessage.style.visibility = 'visible';
                     credentialsMessage.style.visibility = 'hidden';
-                    localStorage.removeItem('gh-settings-token');
+                    localStorage.removeItem('gh-settings-token' );
                 }
             });
         }
