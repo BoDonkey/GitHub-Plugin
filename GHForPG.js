@@ -74,6 +74,9 @@ $(function () {
             let clearSettingsButton = document.getElementById('gh-clear-settings');
             let saveSettingsButton = document.getElementById('gh-save-settings');
             let cancelSettingsButton = document.getElementById('gh-cancel-settings');
+            let userErrorMessage = document.getElementById('gh-username-error');
+            let tokenErrorMessage = document.getElementById('gh-token-error');
+            let credentialsMessage = document.getElementById('correct-credentials');
 
             if (localStorage.getItem('gh-settings-user-name')) {
                 userNameField.value = localStorage.getItem('gh-settings-user-name');
@@ -84,15 +87,38 @@ $(function () {
                 localStorage.removeItem('gh-settings-token');
                 userNameField.value = '';
                 accountTokenField.value = '';
+                saveSettingsButton.className = 'btn btn-primary';
+                userErrorMessage.style.visibility = 'hidden';
+                tokenErrorMessage.style.visibility = 'hidden';
+                credentialsMessage.style.visibility = 'hidden';
             });
-            saveSettingsButton.addEventListener('click', function () {
+            saveSettingsButton.addEventListener('click', async function () {
                 localStorage.setItem('gh-settings-user-name', userNameField.value);
                 localStorage.setItem('gh-settings-token', accountTokenField.value);
-                verifyGitHubAccount();
-                //saveSettingsButton.className = 'btn btn-success';
+                let errorCheck = await verifyGitHubAccount();
+                console.log({
+                    errorCheck
+                });
+                if (true === errorCheck) {
+                    saveSettingsButton.className = 'btn btn-success';
+                    userErrorMessage.style.visibility = 'hidden';
+                    tokenErrorMessage.style.visibility = 'hidden';
+                    credentialsMessage.style.visibility = 'visible';
+                } else if (-1 === errorCheck) {
+                    userErrorMessage.style.visibility = 'visible';
+                    localstorage.removeItem('gh-settings-user-name');
+                    credentialsMessage.style.visibility = 'hidden';
+                } else {
+                    tokenErrorMessage.style.visibility = 'visible';
+                    localStorage.removeItem('gh-settings-token');
+                    credentialsMessage.style.visibility = 'hidden';
+                }
             });
             cancelSettingsButton.addEventListener('click', function () {
                 saveSettingsButton.className = 'btn btn-primary';
+                userErrorMessage.style.visibility = 'hidden';
+                tokenErrorMessage.style.visibility = 'hidden';
+                credentialsMessage.style.visibility = 'hidden';
             })
         }
 
@@ -168,23 +194,20 @@ $(function () {
         async function verifyGitHubAccount() {
             if (localStorage.getItem('gh-settings-token') && localStorage.getItem('gh-settings-user-name')) {
                 let userName = localStorage.getItem('gh-settings-user-name');
+                console.log({
+                    userName
+                })
                 let token = localStorage.getItem('gh-settings-token');
+                //instantiates octokit object with token authorization
                 const octokit = new Octokit({
                     type: 'token',
                     auth: token,
                 });
-                
-                try {
-                    console.log({
-                        octokit
-                    });
-                    let isAuthenticated = await octokit.users.getAuthenticated();
-                    console.log({isAuthenticated});
-                } catch (err) {
-                    console.log('in error');
-                    console.error(err);
-                }
-            }
+                return octokit.users.getAuthenticated()
+                .then(isAuthenticated => isAuthenticated.data.login)
+                .then(returnedName => (userName === returnedName) ? true : -1)
+                .catch(err => console.error(err));
+            };
         };
     });
 });
